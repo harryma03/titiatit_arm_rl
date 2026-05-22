@@ -1,0 +1,27 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments (if any are inside the project)
+venv/
+env/
+.venv/
+
+# Models and Checkpoints
+*.pt
+*.pth
+*.onnx
+*.jit
+
+# Logs, Tensorboard and outputs
+logs/
+runs/
+*.mp4
+*.avi
+*.zip
+frames/
+
+# IDEs
+.vscode/
+.idea/

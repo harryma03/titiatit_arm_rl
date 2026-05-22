@@ -1,0 +1,59 @@
+<mujoco model="titatit_obstacles">
+  <include file="../wheeled_titatit_rl.xml"/>
+
+  <statistic center="2 0 0.4" extent="4"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.35 0.35 0.35" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.35 0.5 0.7" rgb2="0.02 0.03 0.04" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.25 0.28 0.28" rgb2="0.12 0.15 0.16" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.15"/>
+    <material name="block_mat" rgba="0.8 0.2 0.2 1"/>
+    <material name="barrier_mat" rgba="0.2 0.6 0.2 1"/>
+    <material name="ramp_mat" rgba="0.6 0.6 0.2 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 2.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" friction="1.0 0.01 0.01"/>
+
+    <!-- ===== 分散障碍物 ===== -->
+
+    <!-- 1. 单个小方块 (跨越测试) -->
+    <geom name="block_01" pos="1.5 0.0 0.04" type="box" size="0.1 0.3 0.04" material="block_mat"/>
+
+    <!-- 2. 中等方块 -->
+    <geom name="block_02" pos="2.2 0.0 0.08" type="box" size="0.15 0.3 0.08" material="block_mat"/>
+
+    <!-- 3. 大障碍物 (需要绕行或爬过) -->
+    <geom name="block_03" pos="3.0 0.0 0.12" type="box" size="0.2 0.3 0.12" material="block_mat"/>
+
+    <!-- 4. 长条形障碍物 (横跨路面) -->
+    <geom name="barrier_01" pos="3.8 0.0 0.05" type="box" size="0.08 0.5 0.05" material="barrier_mat"/>
+
+    <!-- 5. 双障碍物 (左右各一个, 中间留缝) -->
+    <geom name="block_04L" pos="4.5 -0.25 0.06" type="box" size="0.1 0.15 0.06" material="block_mat"/>
+    <geom name="block_04R" pos="4.5 0.25 0.06" type="box" size="0.1 0.15 0.06" material="block_mat"/>
+
+    <!-- 6. 小斜坡 (用倾斜box模拟) -->
+    <!-- 用阶梯近似: 前低后高 -->
+    <geom name="ramp_low" pos="5.3 0.0 0.03" type="box" size="0.15 0.3 0.03" material="ramp_mat"/>
+    <geom name="ramp_high" pos="5.6 0.0 0.09" type="box" size="0.15 0.3 0.03" material="ramp_mat"/>
+    <geom name="ramp_top" pos="5.9 0.0 0.15" type="box" size="0.15 0.3 0.03" material="ramp_mat"/>
+
+    <!-- 7. 分散小石块 (随机位置) -->
+    <geom name="rock_01" pos="1.2 -0.5 0.02" type="sphere" size="0.04" material="block_mat"/>
+    <geom name="rock_02" pos="2.5 0.5 0.03" type="sphere" size="0.05" material="block_mat"/>
+    <geom name="rock_03" pos="3.5 -0.4 0.025" type="sphere" size="0.035" material="block_mat"/>
+    <geom name="rock_04" pos="4.8 0.45 0.04" type="sphere" size="0.06" material="block_mat"/>
+    <geom name="rock_05" pos="6.0 -0.3 0.02" type="sphere" size="0.03" material="block_mat"/>
+
+    <!-- 8. 高障碍物 (测试侧向绕行) -->
+    <geom name="tall_block" pos="6.8 0.0 0.15" type="box" size="0.15 0.4 0.15" material="barrier_mat"/>
+  </worldbody>
+</mujoco>

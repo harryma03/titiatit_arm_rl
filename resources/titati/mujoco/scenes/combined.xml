@@ -1,0 +1,106 @@
+<mujoco model="titatit_combined">
+  <include file="../wheeled_titatit_rl.xml"/>
+
+  <statistic center="10 0 0.8" extent="14"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.35 0.35 0.35" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-120" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.35 0.5 0.7" rgb2="0.02 0.03 0.04" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.25 0.28 0.28" rgb2="0.12 0.15 0.16" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.15"/>
+    <material name="step_mat" rgba="0.6 0.4 0.2 1"/>
+    <material name="slope_mat" rgba="0.5 0.5 0.5 1"/>
+    <material name="block_mat" rgba="0.8 0.2 0.2 1"/>
+    <material name="barrier_mat" rgba="0.2 0.6 0.2 1"/>
+    <material name="rock_mat" rgba="0.4 0.4 0.4 1"/>
+    <material name="ramp_mat" rgba="0.6 0.6 0.2 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 2.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" friction="1.0 0.01 0.01"/>
+
+    <!-- ============================================================
+         综合测试赛道 v2 — 大范围、大障碍
+         机器人从 (0, 0, 0.44) 出发，沿 X 正方向前进
+         总长度约 22m，覆盖各种复杂地形
+         ============================================================ -->
+
+    <!-- ===== 第1段: 平地起步 (0~2m) ===== -->
+    <!-- 机器人从原点出发，2m 加速距离 -->
+
+    <!-- ===== 第2段: 大石块区 (2~5m) ===== -->
+    <!-- 较大石块散落分布，测试轮子越障能力 -->
+    <geom name="rock_big_01" pos="2.5 -0.5 0.05" type="sphere" size="0.08" material="rock_mat"/>
+    <geom name="rock_big_02" pos="3.0 0.6 0.06" type="sphere" size="0.09" material="rock_mat"/>
+    <geom name="rock_big_03" pos="3.5 -0.3 0.04" type="sphere" size="0.07" material="rock_mat"/>
+    <geom name="rock_big_04" pos="4.0 0.0 0.07" type="sphere" size="0.10" material="rock_mat"/>
+    <geom name="rock_big_05" pos="4.5 0.5 0.05" type="sphere" size="0.08" material="rock_mat"/>
+
+    <!-- ===== 第3段: 大方块障碍区 (5~8m) ===== -->
+    <!-- 大尺寸方块，需要爬过或绕行 -->
+    <geom name="block_large_01" pos="5.5 0.0 0.10" type="box" size="0.25 0.4 0.10" material="block_mat"/>
+    <geom name="block_large_02" pos="6.3 -0.6 0.12" type="box" size="0.2 0.25 0.12" material="block_mat"/>
+    <geom name="block_large_03" pos="6.3 0.6 0.12" type="box" size="0.2 0.25 0.12" material="block_mat"/>
+    <!-- 长条高障碍 -->
+    <geom name="barrier_high" pos="7.2 0.0 0.10" type="box" size="0.12 0.8 0.10" material="barrier_mat"/>
+    <!-- 大块障碍 -->
+    <geom name="block_big" pos="7.8 0.0 0.15" type="box" size="0.2 0.5 0.15" material="block_mat"/>
+
+    <!-- ===== 第4段: 大台阶上坡 (8~11m) ===== -->
+    <!-- 每级台阶更高更宽: 高0.12m, 宽0.35m -->
+    <geom name="step_big_up_01" pos="8.5 0.0 0.06" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_up_02" pos="8.9 0.0 0.18" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_up_03" pos="9.3 0.0 0.30" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_up_04" pos="9.7 0.0 0.42" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_up_05" pos="10.1 0.0 0.54" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_up_06" pos="10.5 0.0 0.66" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+
+    <!-- ===== 第5段: 高台 + 连续障碍 (10.5~13m) ===== -->
+    <geom name="high_platform" pos="11.0 0.0 0.66" type="box" size="0.3 0.8 0.06" material="step_mat"/>
+    <!-- 高台上的障碍 -->
+    <geom name="plat_block_01" pos="11.5 -0.4 0.76" type="box" size="0.15 0.2 0.04" material="block_mat"/>
+    <geom name="plat_block_02" pos="11.5 0.4 0.76" type="box" size="0.15 0.2 0.04" material="block_mat"/>
+    <geom name="plat_barrier" pos="12.0 0.0 0.78" type="box" size="0.1 0.6 0.06" material="barrier_mat"/>
+    <geom name="plat_ramp_low" pos="12.5 0.0 0.72" type="box" size="0.2 0.5 0.06" material="ramp_mat"/>
+    <geom name="plat_ramp_high" pos="12.9 0.0 0.84" type="box" size="0.2 0.5 0.06" material="ramp_mat"/>
+
+    <!-- ===== 第6段: 大台阶下坡 (13~16m) ===== -->
+    <geom name="step_big_dn_01" pos="13.4 0.0 0.54" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_dn_02" pos="13.8 0.0 0.42" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_dn_03" pos="14.2 0.0 0.30" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_dn_04" pos="14.6 0.0 0.18" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+    <geom name="step_big_dn_05" pos="15.0 0.0 0.06" type="box" size="0.175 0.8 0.06" material="step_mat"/>
+
+    <!-- ===== 第7段: 大斜坡上坡 (16~19m) ===== -->
+    <!-- 更陡的斜坡，阶梯近似，坡度约20° -->
+    <geom name="slope_steep_up_01" pos="16.3 0.0 0.06" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_up_02" pos="16.6 0.0 0.18" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_up_03" pos="16.9 0.0 0.30" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_up_04" pos="17.2 0.0 0.42" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_up_05" pos="17.5 0.0 0.54" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_up_06" pos="17.8 0.0 0.66" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_up_07" pos="18.1 0.0 0.78" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_up_08" pos="18.4 0.0 0.90" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+
+    <!-- ===== 第8段: 斜坡顶 + 大斜坡下坡 (18.4~22m) ===== -->
+    <geom name="slope_top" pos="18.8 0.0 0.90" type="box" size="0.25 0.8 0.06" material="slope_mat"/>
+    <!-- 下坡 -->
+    <geom name="slope_steep_dn_01" pos="19.2 0.0 0.78" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_dn_02" pos="19.5 0.0 0.66" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_dn_03" pos="19.8 0.0 0.54" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_dn_04" pos="20.1 0.0 0.42" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_dn_05" pos="20.4 0.0 0.30" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_dn_06" pos="20.7 0.0 0.18" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+    <geom name="slope_steep_dn_07" pos="21.0 0.0 0.06" type="box" size="0.15 0.8 0.06" material="slope_mat"/>
+
+    <!-- ===== 第9段: 终点冲刺 (21~22.5m) ===== -->
+    <geom name="finish_barrier" pos="21.6 0.0 0.10" type="box" size="0.15 0.8 0.10" material="barrier_mat"/>
+    <geom name="finish_block" pos="22.2 0.0 0.15" type="box" size="0.25 0.6 0.15" material="block_mat"/>
+  </worldbody>
+</mujoco>
